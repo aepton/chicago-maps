@@ -10,11 +10,64 @@
 </head>
 <body>
 <div id="nameplate">
-  <h1>Chicago</h1>
+  <h1>Chicago<span class="minimal-select"><select>
+        <option value="tifs">TIF districts</option>
+        <option value="precincts">precincts</option>
+        <option value="wards">wards</option>
+        <option value="parks">parks</option>
+        <option value="census_tracts">census tracts</option>
+        <option value="neighborhoods">neighborhoods</option>
+      </select>
+    </span>
+  </h1>
+</div>
+<div id="info-box"></div>
+<div id="signature">
+  <a href="http://twitter.com/aepton">are</a>
 </div>
 <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/d3/3.4.11/d3.min.js"></script>
 <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/topojson/1.1.0/topojson.min.js"></script>
+<script src="http://d3js.org/colorbrewer.v1.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.6.0/underscore-min.js"></script>
 <script src="/maps.js"></script>
+<script type="text/template" id="tif-template">
+  <div class="info">
+    <h2><%= shape.NAME %></h2>
+    <p>
+      Reference number <%= shape.REF %><br>
+      <%= shape.USE %>
+    </p>
+  </div>
+</script>
+<script type="text/template" id="precinct-template">
+  <div class="info">
+    <h2><%= getOrdinalSuffix(shape.PRECINCT) %> precinct, <%= getOrdinalSuffix(shape.WARD) %> ward</h2>
+  </div>
+</script>
+<script type="text/template" id="parks-template">
+  <div class="info">
+    <h2><%= shape.PARK %> park</h2>
+    <p>
+      <%= shape.LOCATION %><br>
+      <%= shape.ACRES %> acres
+    </p>
+  </div>
+</script>
+<script type="text/template" id="wards-template">
+  <div class="info">
+    <h2><%= getOrdinalSuffix(shape.District_1) %> ward</h2>
+  </div>
+</script>
+<script type="text/template" id="neighborhoods-template">
+  <div class="info">
+    <h2><%= shape.PRI_NEIGH %></h2>
+  </div>
+</script>
+<script type="text/template" id="census_tracts-template">
+  <div class="info">
+    <h2><%= shape.NAMELSAD10 %></h2>
+  </div>
+</script>
 </body>
 </html>

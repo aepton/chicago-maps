@@ -1,16 +1,66 @@
 .shape {
   stroke: rgba(100, 100, 100, 0.6);
-  stroke-width: 1;
+  stroke-width: 0;
 }
 
 .shape:hover {
-  fill: rgba(255, 255, 255, 1.0);
+  stroke: rgba(255, 255, 255, 1.0);
+  opacity: 0.7;
 }
 
 #nameplate {
   position: absolute;
-  left: 25%;
-  bottom: 40%;
+  left: 0px;
+  bottom: 0px;
+  z-index: 9999;
+  background-color: rgba(255, 255, 255, 0.9);
+}
+
+#nameplate > h1 {
+  line-height: 0;
+  font-size: 18px;
+  margin-bottom: 0;
+}
+
+#info-box {
+  position: absolute;
+  left: 25px;
+  bottom: 80px;
+  z-index: 9999;
+  background-color: rgba(255, 255, 255, 0.9);
+}
+
+.info-box h2 {
+  font-size: 16px;
+}
+
+.minimal-select select {
+   background: transparent;
+   font-size: 18px;
+   text-decoration: underline;
+   line-height: 1;
+   border: 0;
+   border-radius: 0;
+   margin-bottom: 0;
+}
+
+#signature {
+  position: fixed;
+  bottom: 0px;
+  right: 0px;
+}
+
+#signature > a {
+  color: black;
+  font-size: 18px;
+  line-height: 0;
+  text-decoration: none;
+}
+
+svg {
+  position: absolute;
+  left: 0px;
+  top: 0px;
 }
 
 h1 {
@@ -19,4 +69,14 @@ h1 {
 
 body {
   font-family: 'Roboto', sans-serif;
+}
+
+@media all and (max-width <= 800) {
+  #nameplate > h1, minimal-select select {
+    font-size: 16px;
+  }
+
+  .info {
+    display: none;
+  }
 }

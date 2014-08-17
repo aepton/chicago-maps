@@ -10,18 +10,31 @@
 </head>
 <body>
 <div id="nameplate">
-  <h1>Chicago<span class="minimal-select"><select>
+  <h1>Chicago<span class="minimal-select"><select id="map">
         <option value="tifs">TIF districts</option>
         <option value="precincts">precincts</option>
         <option value="wards">wards</option>
         <option value="parks">parks</option>
         <option value="census_tracts">census tracts</option>
         <option value="neighborhoods">neighborhoods</option>
+        <option value="boundaries">boundaries</option>
+      </select><select id="overlay">
+        <option value="bike_routes">with bike routes</option>
+        <option value="streets">with streets (18MB)</option>
+        <option value="el">with the El</option>
+        <option value="bike_racks">with bike racks</option>
+        <option value="landmarks">with landmarks</option>
+        <option value="public_art">with public art</option>
+        <option value="dry_precincts">with dry precincts</option>
+        <option value="none">with no overlay</option>
       </select>
     </span>
   </h1>
 </div>
+<div id="zoom-in">+</div>
+<div id="zoom-out">-</div>
 <div id="info-box"></div>
+<div id="overlay-box"></div>
 <div id="signature">
   <a href="http://twitter.com/aepton">are</a>
 </div>
@@ -47,7 +60,7 @@
 </script>
 <script type="text/template" id="parks-template">
   <div class="info">
-    <h2><%= shape.PARK %> park</h2>
+    <h2><%= shape.PARK %> PARK</h2>
     <p>
       <%= shape.LOCATION %><br>
       <%= shape.ACRES %> acres
@@ -68,6 +81,81 @@
   <div class="info">
     <h2><%= shape.NAMELSAD10 %></h2>
   </div>
+</script>
+<script type="text/template" id="streets-template">
+  <div class="info">
+    <h3><%= shape.STREET_NAM %> <%= shape.STREET_TYP %></h3>
+  </div>
+</script>
+<script type="text/template" id="el-template">
+  <div class="info">
+    <h3><%= shape.LINES %></h3>
+    <h4><%= shape.DESCRIPTIO %></h4>
+  </div>
+</script>
+<script type="text/template" id="bike_route-template">
+  <div class="info">
+    <h3><%= shape.STREET %></h3>
+    <h4>
+      From <%= shape.F_STREET %><br>
+      To <%= shape.T_STREET %><br>
+    </h4>
+    <h5><%= shape.BIKEROUTE %></h5>
+  </div>
+</script>
+<script type="text/template" id="public_art-template">
+  <div class="info">
+    <h3><%= shape.NAME %></h3>
+    <% if (shape.ARTIST) { %><h4>By <%= shape.ARTIST %></h4><% } %>
+    <h5>
+      <%= shape.PARK %> PARK</br>
+      Owned by <%= shape.OWNER %>
+    </h5>
+  </div>
+</script>
+<script type="text/template" id="landmarks-template">
+  <div class="info">
+    <h3><%= shape['LANDMARK NAME'] %></h3>
+    <h4>
+      <%= shape['ADDRESS'] %><br>
+      <% if (shape['DATE BUILT']) { %>Built <%= shape['DATE BUILT'] %><br><% } %>
+      <% if (shape['ARCHITECT']) { %><%= shape['ARCHITECT'] %>, architect<% } %>
+    </h4>
+  </div>
+</script>
+<script type="text/template" id="bike_rack-template">
+  <div class="info">
+    <h3><%= shape.TotInstall %> rack<% if (parseInt(shape.TotInstall) > 1) { %>s<% } %> installed</h3>
+    <h4><%= shape.Address %></h4>
+  </div>
+</script>
+<script type="text/template" id="dry_precinct-template">
+  <div class="info dry_precinct">
+    <h3><%= getPrecinctName(shape.VOTE_DRY_I) %> (<%= shape.STATUS %>)</h3>
+    <p>
+      The Illinois Liquor Control Act of 1934 (i.e., one year after Prohibition ended) allows any
+      precinct in Chicago to vote itself "dry" or "wet". If a precinct is dry, no liquor licenses
+      within the original boundaries of the precinct at the time of the election may ever be sold
+      (except for catering liquor licenses.) If a precinct is wet, packaged alcoholic goods may be
+      sold as well, but no consumption may be permitted on-premises.
+    </p>
+    <p>
+      Precinct numbers as reflected above are the original ones that voted to become dry. The
+      current boundaries may fall into a different precinct today, and often an entirely different
+      ward as well.
+    </p>
+  </div>
+</script>
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-29485819-1']);
+  _gaq.push(['_setDomainName', 'epton.org']);
+  _gaq.push(['_trackPageview']);
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
 </script>
 </body>
 </html>

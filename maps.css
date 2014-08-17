@@ -1,3 +1,37 @@
+text, circle {
+  pointer-events: none;
+}
+
+#zoom-in, #zoom-out {
+  position: absolute;
+  width: 35px;
+  height: 35px;
+  left: 0px;
+  font-size: 18px;
+  background-color: rgba(255, 255, 255, 0.9);
+  color: rgba(0, 0, 0, 0.9);
+  text-align: center;
+  z-index: 10000;
+  border-right: 1px solid black;
+  border-bottom: 1px solid black
+}
+
+
+#zoom-in:hover, #zoom-out:hover {
+  background-color: rgba(0, 0, 0, 0.9);
+  color: rgba(255, 255, 255, 0.9);
+  cursor: default;
+}
+
+#zoom-in {
+  top: 0px;
+}
+
+#zoom-out {
+  top: 35px;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
 .shape {
   stroke: rgba(100, 100, 100, 0.6);
   stroke-width: 0;
@@ -20,18 +54,35 @@
   line-height: 0;
   font-size: 18px;
   margin-bottom: 0;
+  padding: 3px;
+}
+
+#info-box, #overlay-box {
+  position: absolute;
+  right: 0px;
+  z-index: 9999;
+  background-color: rgba(255, 255, 255, 0.9);
+  text-align: right;
+  margin-top: 0px;
+  max-width: 20%;
+  padding: 3px;
+}
+
+#overlay-box {
+  top: 150px;
 }
 
 #info-box {
-  position: absolute;
-  left: 25px;
-  bottom: 80px;
-  z-index: 9999;
-  background-color: rgba(255, 255, 255, 0.9);
+  top: 0px;
 }
 
-.info-box h2 {
-  font-size: 16px;
+.info h2 {
+  margin-top: 0px;
+}
+
+.dry_precinct {
+  text-align: left;
+  padding: 3px;
 }
 
 .minimal-select select {
@@ -48,12 +99,14 @@
   position: fixed;
   bottom: 0px;
   right: 0px;
+  z-index: 9999;
+  padding: 3px;
+  background-color: rgba(255, 255, 255, 0.9);
 }
 
 #signature > a {
   color: black;
-  font-size: 18px;
-  line-height: 0;
+  font-size: 1em;
   text-decoration: none;
 }
 
@@ -71,12 +124,33 @@ body {
   font-family: 'Roboto', sans-serif;
 }
 
-@media all and (max-width <= 800) {
-  #nameplate > h1, minimal-select select {
-    font-size: 16px;
+@media all and (max-width: 800px) {
+  #map, #overlay, #nameplate > h1 {
+    font-size: 14px;
+  }
+
+  #signature > a {
+    font-size: 8px !important;
+  }
+
+  #info-box {
+    max-width: 60%;
+  }
+
+  .dry_precinct {
+    padding: 3px;
+  }
+
+  #overlay-box {
+    left: 0px;
+    bottom: 50px;
+    top: initial;
+    right: initial;
+    text-align: left;
+    max-width: 100% !important;
   }
 
   .info {
-    display: none;
+    font-size: 0.8em;
   }
 }

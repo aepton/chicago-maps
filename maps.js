@@ -31,7 +31,6 @@ function loadMap(settings) {
   d3.selectAll("path.shape").remove();
   $('#info-box').html('');
 
-
   if (settings['none'] == 'none')
     return;
   if (settings['void'] == 'void') {
@@ -41,7 +40,7 @@ function loadMap(settings) {
     return;
   }
 
-  var width = $(window).width(), height = $(window).height();
+  var width = $(document).width(), height = $(document).height();
   var zoom_scale = d3.scale.linear()
     .domain([300, 1200])
     .range([50000, 150000]);
@@ -83,7 +82,7 @@ function loadMap(settings) {
 function showPosition(position) {
   d3.selectAll("text").remove();
   d3.selectAll("circle").remove();
-  var width = $(window).width(), height = $(window).height();
+  var width = $(document).width(), height = $(document).height();
   var zoom_scale = d3.scale.linear()
     .domain([300, 1200])
     .range([50000, 150000]);
@@ -111,8 +110,8 @@ function showPosition(position) {
   }
 }
 
-function drawChicago() {
-  var width = $(window).width(), height = $(window).height();
+function drawChicago(hide) {
+  var width = $(document).width(), height = $(document).height();
 
   var zoom_scale = d3.scale.linear()
     .domain([300, 1200])
@@ -135,6 +134,11 @@ function drawChicago() {
       .attr("d", path)
       .attr("fill", "rgba(0, 0, 0, 0.05)")
       .attr("class", "city");
+    if (hide) {
+      d3.selectAll("path.city")
+        .attr('visibility', 'hidden');
+      inVoid = true;
+    }
   });
 }
 
@@ -157,7 +161,7 @@ function loadOverlay(settings) {
 
 function paintOverlay(layer, settings) {
   currentOverlay = {'layer': layer, 'settings': settings};
-  var width = $(window).width(), height = $(window).height();
+  var width = $(document).width(), height = $(document).height();
 
   d3.selectAll("path.overlay").remove();
   $('#overlay-box').html('');
@@ -212,16 +216,20 @@ function paintOverlay(layer, settings) {
 function dragmove() {
   if (!inDrag && mainScale > 1) {
     inDrag = true;
-    var width = $(window).width(), height = $(window).height();
+    var width = $(document).width(), height = $(document).height();
     dragX = translate[0];
     dragY = translate[1];
   } else {
     dragX += d3.event.dx;
     dragY += d3.event.dy;
   }
-  gChi.attr("transform", "translate(" + dragX + "," + dragY + ")scale(" + mainScale + ")");
-  gMap.attr("transform", "translate(" + dragX + "," + dragY + ")scale(" + mainScale + ")");
-  gOver.attr("transform", "translate(" + dragX + "," + dragY + ")scale(" + mainScale + ")");
+  try {
+    gChi.attr("transform", "translate(" + dragX + "," + dragY + ")scale(" + mainScale + ")");
+    gMap.attr("transform", "translate(" + dragX + "," + dragY + ")scale(" + mainScale + ")");
+    gOver.attr("transform", "translate(" + dragX + "," + dragY + ")scale(" + mainScale + ")");
+  } catch(err) {
+    ;
+  }
   translate = [dragX, dragY];
 }
 
@@ -270,7 +278,7 @@ $(document).ready(function() {
     'ML': 'black'
   };
 
-  translate = [$(window).width()/2, $(window).height()/2];
+  translate = [$(document).width()/2, $(document).height()/2];
 
   drag = d3.behavior.drag()
     .on("dragstart", function() {
@@ -322,15 +330,35 @@ $(document).ready(function() {
     'none': {'none': 'none'}
   };
 
-  var width = $(window).width(), height = $(window).height();
+  var width = $(document).width(), height = $(document).height();
   svg = d3.select("body").append("svg")
     .attr("width", width)
     .attr("height", height)
     .call(drag);
 
-  drawChicago();
-  loadMap(maps['tifs']);
-  loadOverlay(overlay['bike_routes']);
+  var map = maps['tifs'];
+  var over = overlay['bike_routes'];
+  var params = $.url().param();
+  if (params) {
+    if (params['map'] && maps[params['map']]) {
+      if (params['map'] != 'void')
+        drawChicago(false);
+      else
+        drawChicago(true);
+      map = maps[params['map']];
+      $('select#map').val(params['map']);
+    } else {
+      drawChicago(false);
+    }
+    if (params['overlay'] && overlay[params['overlay']]) {
+      over = overlay[params['overlay']];
+      $('select#overlay').val(params['overlay']);
+    }
+  }
+  loadMap(map);
+  loadOverlay(over);
+  $('#page-link > a').attr(
+    'href', '/index.html?map=' + $('select#map').val() + '&overlay=' + $('select#overlay').val());
   $('select#map').change(function(e) {
     if (inVoid && $(this).val() != 'void') {
       d3.selectAll("path.city")
@@ -338,13 +366,17 @@ $(document).ready(function() {
       inVoid = false;
     }
     loadMap(maps[$(this).val()]);
+    $('#page-link > a').attr(
+      'href', '/index.html?map=' + $('select#map').val() + '&overlay=' + $('select#overlay').val());
   });
   $('select#overlay').change(function(e) {
     loadOverlay(overlay[$(this).val()]);
+    $('#page-link > a').attr(
+      'href', '/index.html?map=' + $('select#map').val() + '&overlay=' + $('select#overlay').val());
   });
 
   $('#zoom-in').click(function() {
-    var width = ($(window).width()/(1/mainScale)), height = ($(window).height()/(1/mainScale));
+    var width = ($(document).width()/(1/mainScale)), height = ($(document).height()/(1/mainScale));
     translate = [
       -(width/2) + (translate[0] - lastZoom[0]),
       -(height/2) + (translate[1] - lastZoom[1])];
@@ -362,8 +394,8 @@ $(document).ready(function() {
   $('#zoom-out').click(function() {
     if (mainScale > 1) {
       mainScale -= 1;
-      var width = $(window).width()/(1/(mainScale - 1)),
-        height = $(window).height()/(1/(mainScale - 1));
+      var width = $(document).width()/(1/(mainScale - 1)),
+        height = $(document).height()/(1/(mainScale - 1));
       translate = [
         -(width/2) + (translate[0] - lastZoom[0]),
         -(height/2) + (translate[1] - lastZoom[1])];

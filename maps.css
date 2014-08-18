@@ -68,6 +68,12 @@ text, circle {
   padding: 3px;
 }
 
+#page-link > a {
+  color: black;
+  font-size: 18px;
+  font-weight: normal;
+}
+
 #overlay-box {
   top: 150px;
 }
@@ -152,5 +158,13 @@ body {
 
   .info {
     font-size: 0.8em;
+  }
+
+  #page-link {
+    position: fixed;
+    left: 0px;
+    top: 105px;
+    background-color: rgba(255, 255, 255, 0.9);
+    z-index: 9999;
   }
 }

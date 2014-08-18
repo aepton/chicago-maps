@@ -59,11 +59,11 @@ text, circle {
 
 #info-box, #overlay-box {
   position: absolute;
-  right: 0px;
+  right: 10px;
   z-index: 9999;
   background-color: rgba(255, 255, 255, 0.1);
   text-align: right;
-  margin-top: 0px;
+  margin-top: 10px;
   max-width: 20%;
   padding: 3px;
 }
@@ -139,8 +139,13 @@ body {
     font-size: 8px !important;
   }
 
+  #info-box, #overlay-box {
+    margin-top: 0px;
+  }
+
   #info-box {
     max-width: 60%;
+    right: 0px;
   }
 
   .dry_precinct {

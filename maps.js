@@ -10,7 +10,8 @@ var svg = {},
   dragX = 0,
   dragY = 0,
   lastZoom = [0, 0],
-  currentOverlay = {'settings': '', 'layer': ''};
+  currentOverlay = {'settings': '', 'layer': ''},
+  inVoid = true;
 
 function getOrdinalSuffix(i) {
   var j = i % 10, k = i % 100;
@@ -30,8 +31,16 @@ function loadMap(settings) {
   d3.selectAll("path.shape").remove();
   $('#info-box').html('');
 
+
   if (settings['none'] == 'none')
     return;
+  if (settings['void'] == 'void') {
+    d3.selectAll("path.city")
+      .attr('visibility', 'hidden');
+    inVoid = true;
+    return;
+  }
+
   var width = $(window).width(), height = $(window).height();
   var zoom_scale = d3.scale.linear()
     .domain([300, 1200])
@@ -72,8 +81,8 @@ function loadMap(settings) {
 }
 
 function showPosition(position) {
-  gMap.selectAll("text").remove();
-  gMap.selectAll("circle").remove();
+  d3.selectAll("text").remove();
+  d3.selectAll("circle").remove();
   var width = $(window).width(), height = $(window).height();
   var zoom_scale = d3.scale.linear()
     .domain([300, 1200])
@@ -84,7 +93,7 @@ function showPosition(position) {
       .translate([width/2, height/2]);
   var coords = projection([position.coords.longitude, position.coords.latitude]);
 
-  gMap.append('text')
+  gOver.append('text')
     .attr("class", "youarehere")
     .attr("transform", function() { return "translate(" + coords + ")scale(" + mainScale + ")"; })
     .attr("dx", ".35em")
@@ -92,7 +101,7 @@ function showPosition(position) {
     .text('You are here');
 
   if (position.coords.accuracy) {
-    gMap.append('circle')
+    gOver.append('circle')
       .attr("class", "youarehere")
       .attr("transform", function() { return "translate(" + coords + ")scale(" + mainScale + ")"; })
       .attr("stroke", "black")
@@ -283,7 +292,8 @@ $(document).ready(function() {
     'neighborhoods': {
       'path': 'neighborhoods', 'scale': main_scale, 'num_colors': 20,
       'template': NeighborhoodsTemplate},
-    'boundaries': {'none': 'none'}
+    'boundaries': {'none': 'none'},
+    'void': {'void': 'void'}
   };
 
   var overlay = {
@@ -294,7 +304,7 @@ $(document).ready(function() {
     'el': {
       'path': 'cta_rail', 'scale': el_scale, 'num_colors': 1, 'stroke-width': 4,
       'opacity': '0.7', 'template': ElTemplate, 'fill': false, 'point-radius': 1, 'repaint': false},
-    'bike_routes': {'path': 'bike_routes', 'scale': main_scale, 'num_colors': 1, 'stroke-width': 2,
+    'bike_routes': {'path': 'bike_routes', 'scale': main_scale, 'num_colors': 1, 'stroke-width': 1,
       'opacity': '0.2', 'template': BikeRouteTemplate, 'fill': false, 'point-radius': 1,
       'repaint': false},
     'bike_racks': {'path': 'bike_racks', 'scale': alt_scale, 'num_colors': 9, 'stroke-width': 1,
@@ -322,6 +332,11 @@ $(document).ready(function() {
   loadMap(maps['tifs']);
   loadOverlay(overlay['bike_routes']);
   $('select#map').change(function(e) {
+    if (inVoid && $(this).val() != 'void') {
+      d3.selectAll("path.city")
+        .attr('visibility', 'visible');
+      inVoid = false;
+    }
     loadMap(maps[$(this).val()]);
   });
   $('select#overlay').change(function(e) {

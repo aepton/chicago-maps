@@ -61,7 +61,7 @@ text, circle {
   position: absolute;
   right: 0px;
   z-index: 9999;
-  background-color: rgba(255, 255, 255, 0.9);
+  background-color: rgba(255, 255, 255, 0.1);
   text-align: right;
   margin-top: 0px;
   max-width: 20%;
